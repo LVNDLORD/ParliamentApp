@@ -7,6 +7,8 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
+
 
 struct Member: Hashable, Codable, Identifiable {
     let id: Int
@@ -33,7 +35,8 @@ struct Member: Hashable, Codable, Identifiable {
         case constituency
     }
     
-    var isFavorite: Bool = false
+    //var isFavorite: Bool = false
+    var isFeatured: Bool = false
     
     var image: Image {
         Image(party)
@@ -42,6 +45,14 @@ struct Member: Hashable, Codable, Identifiable {
     var fullPartyName: String {
         Party(rawValue: party)?.fullName() ?? "Unknown Party"
     }
+    
+    var category: Party? {
+        return Party(rawValue: party)
+        }
+    
+    
+    
+    
 }
 
 

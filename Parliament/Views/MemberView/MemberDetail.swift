@@ -6,32 +6,33 @@
 //
 
 import SwiftUI
+import SwiftData
+
+
+import SwiftUI
+import SwiftData
 
 struct MemberDetail: View {
-    @Environment(ModelData.self) var modelData
+    @Environment(\.modelContext) private var context
+// Access ModelContext
+    @Environment(ModelData.self) var modelData // Access ModelData from environment
     var member: Member
-    
-    var memberIndex: Int {
-        modelData.members.firstIndex(where: { $0.id == member.id })!
-    }
-    
+
     var body: some View {
-        @Bindable var modelData = modelData
-        
         let currentYear = Calendar.current.component(.year, from: Date())
         let age = currentYear - member.bornYear
-        
+
         VStack {
             CircleImage(image: member.image)
                 .padding(.bottom, 50)
-            
+
             VStack(alignment: .leading) {
                 HStack {
                     Text("\(member.first) \(member.last) (\(age))")
                         .font(.title)
-                    
+
                     Spacer()
-                    
+
                     if let twitterURL = URL(string: member.twitter), !member.twitter.isEmpty {
                         Link("Twitter", destination: twitterURL)
                             .font(.headline)
@@ -39,7 +40,7 @@ struct MemberDetail: View {
                     }
                 }
             }
-            
+
             HStack {
                 Text(member.fullPartyName)
                     .font(.subheadline)
@@ -53,13 +54,43 @@ struct MemberDetail: View {
             HStack {
                 Text("Constituency: " + member.constituency)
                 Spacer()
-                FavoriteButton(isSet: $modelData.members[memberIndex].isFavorite)
+                FavoriteButton(isSet: Binding(
+                    get: { modelData.isFavorite(member: member, context: context) },
+                    set: { newValue in
+                        if newValue {
+                            modelData.addToFavorites(member, context: context)
+                        } else {
+                            modelData.removeFromFavorites(member, context: context)
+                        }
+                        do {
+                            try context.save() // Persist the changes
+                        } catch {
+                            print("Failed to save context: \(error)")
+                        }
+                    }
+                ))
             }
-            
         }
         .padding()
+        .onAppear {
+            do {
+                print("ModelContext: \(context)")
+                print("ModelData members count: \(modelData.members.count)")
+                let fetchDescriptor = FetchDescriptor<FavoriteMember>()
+                let favorites = try context.fetch(fetchDescriptor)
+                print("Favorite Members: \(favorites)")
+            } catch {
+                print("Failed to fetch favorites: \(error)")
+            }
+        }
+
+
     }
+    
 }
+
+
+
 
 #Preview {
     let modelData = ModelData()

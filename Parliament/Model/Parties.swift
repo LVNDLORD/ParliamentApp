@@ -5,6 +5,7 @@
 //  Created by Andrii Deshko on 8.11.2024.
 //
 
+
 enum Party: String, Codable {
     case kesk = "Keskusta"
     case kok = "Kokoomus"
@@ -16,7 +17,7 @@ enum Party: String, Codable {
     case r = "Ruotsalainen"
     case liik = "Liike Nyt"
 
-    // Method to get the full name of the party
+
     func fullName() -> String {
         return self.rawValue
     }

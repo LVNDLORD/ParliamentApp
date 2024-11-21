@@ -6,9 +6,15 @@
 //
 
 import SwiftUI
+import SwiftData
+
 
 struct MemberRow: View {
     var member: Member
+    @Environment(\.modelContext) private var context
+    @Environment(ModelData.self) var modelData
+    @Query private var favoriteMembers: [FavoriteMember]
+
 
     var body: some View {
         HStack {
@@ -20,13 +26,16 @@ struct MemberRow: View {
 
             Spacer()
 
-            if member.isFavorite {
+            if modelData.isFavorite(member: member, favoriteMembers: favoriteMembers) {
                 Image(systemName: "star.fill")
                     .foregroundStyle(.yellow)
             }
         }
     }
+    
+
 }
+
 
 #Preview {
     let members = ModelData().members

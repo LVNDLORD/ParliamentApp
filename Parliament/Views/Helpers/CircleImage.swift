@@ -16,7 +16,6 @@ struct CircleImage: View {
             .scaledToFit()
             .cornerRadius(20)
             .frame(width: 120, height: 120)
-           // .shadow(radius: 20)
     }
 }
 

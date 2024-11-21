@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct ParliamentApp: App {
@@ -15,6 +16,7 @@ struct ParliamentApp: App {
         WindowGroup {
             ContentView()
                 .environment(modelData)
+                .modelContainer(for: FavoriteMember.self) // Attach the model container for SwiftData
         }
     }
 }
